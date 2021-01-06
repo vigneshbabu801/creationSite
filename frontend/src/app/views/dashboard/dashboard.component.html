@@ -1,0 +1,166 @@
+<link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/css/ol.css" type="text/css">
+<script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
+<div class="animated fadeIn">
+    <br />
+    <div class="col-2">
+        <button type="button" class="btn btn-block btn-info" data-toggle="modal" (click)="myModal.show()">Create
+      Project</button>
+    </div>
+    <br />
+    <div class="col-2">
+        <button type="button" class="btn btn-block btn-info" (click)="showcreate()">Add New Site</button>
+    </div>
+    <br />
+    <div class="col-2">
+        <button type="button" class="btn btn-block btn-info" (click)="showedit()">Edit the Site</button>
+    </div>
+    <br />
+    <div class="col-10">
+        <div id="map" style="height: 300px;width: 100%;"></div>
+        <div id="popup" class="ol-popup">
+            <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+            <div id="popup-content"></div>
+        </div>
+    </div>
+    <br />
+    <div class="col-sm-6" *ngIf="showaddsite">
+        <div class="card">
+            <div class="card-header">
+                <strong>Add New Site</strong>
+            </div>
+            <div class="card-body">
+                <form [formGroup]="createnewsite" (ngSubmit)="onSubmitCreateSite()">
+                    <div class="form-group">
+                        <label for="company">Select Project</label>
+                        <select id="selectproject" name="selectproject" class="form-control" formControlName="selectproject" [ngClass]="{ 'is-invalid': submitterCreateSite && c.selectproject.errors }">
+                        <option value="0">Please select</option>
+                        <option *ngFor="let policy of policiesTT" value={{policy.name}}>{{policy.name}}</option>
+                      </select>
+                        <div *ngIf="submitterCreateSite && c.selectproject.errors" class="invalid-feedback">
+                            <div *ngIf="c.selectproject.errors.required">Project is required</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="site">Site Name</label>
+                        <input type="text" class="form-control" name="sitename" id="sitename" formControlName="sitename" placeholder="Enter Site name" [ngClass]="{ 'is-invalid': submitterCreateSite && c.sitename.errors }">
+                        <div *ngIf="submitterCreateSite && c.sitename.errors" class="invalid-feedback">
+                            <div *ngIf="c.sitename.errors.required">Site name is required</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-sm btn-warning" (click)="onClickLoad()"> Load Co-Ordinates</button>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-sm-6">
+                            <label for="lat">Latitude</label>
+                            <input type="text" class="form-control" name="lati" id="lati" formControlName="lati" [ngClass]="{ 'is-invalid': submitterCreateSite && c.lati.errors }">
+                            <div *ngIf="submitterCreateSite && c.lati.errors" class="invalid-feedback">
+                                <div *ngIf="c.lati.errors.required">Clik the before button to load the values</div>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="long">Longitude</label>
+                            <input type="text" class="form-control" name="long" id="long" formControlName="long" [ngClass]="{ 'is-invalid': submitterCreateSite && c.long.errors }">
+                            <div *ngIf="submitterCreateSite && c.long.errors" class="invalid-feedback">
+                                <div *ngIf="c.long.errors.required">Clik the before button to load the values</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-dot-circle-o"></i> Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="col-sm-6" *ngIf="showeditsite">
+        <div class="card">
+            <div class="card-header">
+                <strong>Edit Site</strong>
+            </div>
+            <div class="card-body">
+                <form [formGroup]="editSite" (ngSubmit)="onSubmitEditSite()">
+                    <div class="form-group">
+                        <label for="company">Select Project</label>
+                        <select id="selectproject" name="selectproject" class="form-control" formControlName="editproject" [ngClass]="{ 'is-invalid': submittereditSite && e.editproject.errors }">
+                        <option value="0">Please select</option>
+                        <option value="1">Option #1</option>
+                        <option value="2">Option #2</option>
+                        <option value="3">Option #3</option>
+                      </select>
+                        <div *ngIf="submittereditSite && e.editproject.errors" class="invalid-feedback">
+                            <div *ngIf="e.editproject.errors.required">Project is required</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="site">Site Name</label>
+                        <input type="text" class="form-control" name="sitename" id="editSitename" formControlName="editSitename" placeholder="Enter Site name" [ngClass]="{ 'is-invalid': submittereditSite && e.editSitename.errors }">
+                        <div *ngIf="submittereditSite && e.editSitename.errors" class="invalid-feedback">
+                            <div *ngIf="e.editSitename.errors.required">Site name is required</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-sm btn-warning" (click)="onClickLoadEdit()"> Load Co-Ordinates</button>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-sm-6">
+                            <label for="lat">Latitude</label>
+                            <input type="text" class="form-control" name="lat" id="lat" formControlName="lati">
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="long">Longitude</label>
+                            <input type="text" class="form-control" name="long" id="long" formControlName="long">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-dot-circle-o"></i> Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--/.col-->
+</div>
+<div bsModal #myModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">New Project</h4>
+                <button type="button" class="close" (click)="myModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" [formGroup]="createProjectForm" (ngSubmit)="onSubmit()">
+                    <div class="form-group row">
+                        <label class="col-md-3 col-form-label">Project name</label>
+                        <div class="col-md-9">
+                            <input type="text" id="projectname" name="projectname" class="form-control" formControlName="projectname" placeholder="Enter Project name.." [ngClass]="{ 'is-invalid': submitted && f.projectname.errors }" />
+                            <div *ngIf="submitted && f.projectname.errors" class="invalid-feedback">
+                                <div *ngIf="f.projectname.errors.required">Project name is required</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-3 col-form-label" for="hf-password">Description</label>
+                        <div class="col-md-9">
+                            <textarea name="description" id="description" rows="4" class="form-control" formControlName="description" placeholder="Description.." [ngClass]="{ 'is-invalid': submitted && f.description.errors }"></textarea>
+                            <div *ngIf="submitted && f.description.errors" class="invalid-feedback">
+                                <div *ngIf="f.description.errors.required">Description is required</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" (click)="myModal.hide()"><i class="fa fa-ban"></i>
+              Close</button>
+                        <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Submit</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</div>
+<!-- /.modal -->
